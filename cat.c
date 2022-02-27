@@ -1,36 +1,35 @@
-/** simple cat implemetation for two files **/
+/** simple cat implemetation **/
 #include<stdio.h>
 #include<stdlib.h>
 
 int
 main(int argc, char *argv[])
 {
-        char *prog = argv[0];
+        char *prog = argv[0]; /** program name for error **/
 
         char c;
-        FILE *first, *second; 
+        FILE *fp;
 
-        if (argc != 3){
-                printf("%s: usage %s <filename> <filename>\n", prog, prog);
+        if (argc < 2){
+                printf("%s: you need to pass at least one file to cat \n",
+                       prog);
                 exit(-1);
         }
 
-        if ((first = fopen(argv[1], "r")) == NULL) {
-                printf("%s: can not open %s\n", prog, argv[1]);
-                exit(-1);
-        }
-        if ((second = fopen(argv[2], "r")) == NULL) {
-                printf("%s: can not open %s\n", prog, argv[2]);
-                exit(-1);
-        }
+        /** we need to move the argv array by one, since we dont want to print
+         * the binary program, argv[0] = prog (the actual binary) **/
+        *argv++;
 
-        while((c = getc(first)) != EOF) {
-                putc(c, stdout);
+        while(argc-- > 1){
+            if ((fp = fopen(*argv++, "r")) == NULL) {
+                    printf("%s: can not open file\n", prog);
+                    exit(-1);
+            }
+            while((c = getc(fp)) != EOF) {
+                    putc(c, stdout);
+            }
+            fclose(fp);
         }
-        while((c = getc(second)) != EOF) {
-                putc(c, stdout);
-        }
-
         return 0;
 }
 
